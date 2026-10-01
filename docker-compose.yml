@@ -1,0 +1,45 @@
+name: cht-frutilla-app
+
+services:
+  pgsql:
+    image: postgres:15-alpine
+    container_name: frutilla_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/postgres/db:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4:7
+    container_name: frutilla_pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "8080:80"
+    depends_on:
+      - pgsql
+
+  backend:
+    build:
+      context: ./backend_frutilla
+      dockerfile: Dockerfile
+    container_name: frutilla_backend
+    restart: on-failure
+    environment:
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@pgsql:5432/${DB_NAME}
+      FLASK_ENV: development
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend_frutilla:/app
+    depends_on:
+      - pgsql
+  
