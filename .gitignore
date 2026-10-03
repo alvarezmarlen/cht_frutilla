@@ -1,2 +1,20 @@
+# Python / Flask
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+env/
+venv/
+instance/
+.webassets-cache
+
+# Docker y Base de datos (¡Muy importante!)
+/data/postgres/
 .env
-data/
+*.log
+
+# Entorno de desarrollo local
+.DS_Store
+.vscode/
+.idea/
